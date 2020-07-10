@@ -42,3 +42,5 @@ Imports: MASS (>= 7.3),
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://andrewdhawan.github.io/sigQC
+BugReports: https://github.com/andrewdhawan/sigQC/issues
