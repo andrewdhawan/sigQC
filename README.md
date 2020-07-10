@@ -4,7 +4,8 @@
 [![CRAN version](http://www.r-pkg.org/badges/version/sigQC)](https://CRAN.R-project.org/package=sigQC)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/sigQC)](https://CRAN.R-project.org/package=sigQC)
 
-[![NatProtoc](https://img.shields.io/badge/Nat%20Protoc-10.1038/s41596--019--0136--8-green.svg)](https://www.nature.com/articles/s41596-019-0136-8)
+[![NatProtoc](https://img.shields.io/badge/Nat%20Protoc-10.1038/s41596--019--0136--8-blue.svg)](https://www.nature.com/articles/s41596-019-0136-8)
+[![bioRxiv](https://img.shields.io/badge/bioRxiv-10.1101/203729-blue)](https://www.biorxiv.org/content/10.1101/203729v2)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1319848.svg)](https://doi.org/10.5281/zenodo.1319848)
 
 This directory contains source code, sample code, and a vignette describing the methodology for gene signature quality control as defined by the sigQC methodology. 
