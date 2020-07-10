@@ -4,10 +4,19 @@
 \alias{make_all_plots}
 \title{make_all_plots.R}
 \usage{
-make_all_plots(gene_sigs_list, mRNA_expr_matrix, names_sigs = NULL,
-  names_datasets = NULL, covariates = NULL, thresholds = NULL,
-  out_dir = tempdir(), showResults = TRUE, origin = NULL,
-  doNegativeControl = TRUE, numResampling = 50)
+make_all_plots(
+  gene_sigs_list,
+  mRNA_expr_matrix,
+  names_sigs = NULL,
+  names_datasets = NULL,
+  covariates = NULL,
+  thresholds = NULL,
+  out_dir = tempdir(),
+  showResults = TRUE,
+  origin = NULL,
+  doNegativeControl = TRUE,
+  numResampling = 50
+)
 }
 \arguments{
 \item{gene_sigs_list}{A list object, for the gene signatures. The name reference for each list element should correspond to the name of the gene signature. This list consists of k-by-1 character matrices of k gene names, which comprise the gene signature. Genes must be annotated in the same manner as the rows of the data matrix; at least one gene name must be present in the rownames of the gene expression matrices for the signature to be evaluated on that dataset.}
