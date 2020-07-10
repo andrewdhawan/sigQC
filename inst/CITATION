@@ -1,0 +1,16 @@
+citHeader("To cite sigQC in publications use:")
+
+citEntry(entry = "Article",
+  title = "Guidelines for using {sigQC} for systematic evaluation of gene signatures",
+  author = "Andrew Dhawan and Alessandro Barberis and Wei-Chen Cheng and Enric Domingo and Catharine West and Tim Maughan and Jacob G Scott and Adrian L Harris and Francesca M Buffa",
+  journal = "Nature Protocols",
+  year = "2019",
+  volume = "14",
+  pages = "1377--1400",
+  url = "https://www.nature.com/articles/s41596-019-0136-8",
+  doi = "10.1038/s41596-019-0136-8",
+  textVersion = paste("Dhawan A, Barberis A, Cheng W, et al.",
+    "Guidelines for using sigQC for systematic evaluation of gene signatures.",
+    "Nature Protocols. 2019; 14: 1377-1400.",
+    "doi:10.1038/s41596-019-0136-8")
+)
