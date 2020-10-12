@@ -1,1 +1,9 @@
 inst/doc
+
+# R/Rstudio files
+.Rproj.user
+.Rhistory
+*.Rproj
+
+# random OS files
+**/*DS_Store

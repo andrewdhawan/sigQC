@@ -1,3 +1,5 @@
+^docs$
 ^INSTALLATION\.TXT$
 ^changelog\.txt$
 ^sigQC\.Rproj$
+^\.Rproj\.user$
