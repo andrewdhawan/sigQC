@@ -20,6 +20,13 @@ To install the _sigQC_ package, run the following code:
 install.packages('sigQC')
 ```
 
+# Reference
+
+**Please cite _sigQC_ if you use it in any of your workflows:** 
+
+Dhawan, Andrew, Alessandro Barberis, Wei-Chen Cheng, Enric Domingo, Catharine West, Tim Maughan, Jacob G. Scott, Adrian L. Harris, and Francesca M. Buffa. ``Guidelines for using sigQC for systematic evaluation of gene signatures.'' _Nature protocols_ 14, no. 5 (2019): 1377-1400.
+
+
 # General overview
 
 The _sigQC_ package is designed to be a single function __make_all_plots()__, capable of customising outputs as needed for the user, based on the inputs provided.
@@ -35,9 +42,9 @@ matrix for the samples in a given dataset and the associated colours, for plotti
 * ```thresholds```: (Optional) A __list__ of thresholds to be considered for each data set, default is median expression of _all genes_ of a data set. A gene is considered expressed if above the threshold, non-expressed otherwise. One threshold per dataset, in the same order as the dataset list.
 * ```out_dir```: (Optional) A __string__ specifying the location/name of the directory where outputs should be saved to
 * ```showResults```: (Optional) A __boolean__ specifying whether to display the output plots in R graphics windows or not
-* ```origin```: (Optional) A character __vector__ with each character describing the origin of the different datasets (used only in the computation of rank product statistic among autocorrelation matrices, to account for batch effects)
-* ```doNegativeControl```: (Optional) A __boolean__ specifying whether to do the negative and permutation control bootstrap resampling for each signature/dataset combination; note that if true, it will take significantly longer to run _sigQC_
-* ```numResampling```: (Optional) A __numeric__ value specifying the number of bootstrapping runs to perform for the negative and permutation controls
+* ```origin```: (Optional) A character __vector__ with each character describing the origin of the different datasets (used only in the computation of rank product statistic among intra-signature correlation matrices, to account for batch effects)
+* ```doNegativeControl```: (Optional) A __boolean__ specifying whether to do the negative and permutation control  resampling for each signature/dataset combination; note that if true, it will take significantly longer to run _sigQC_
+* ```numResampling```: (Optional) A __numeric__ value specifying the number of resampling runs to perform for the negative and permutation controls
 
 # Sample workflow
 
@@ -155,9 +162,9 @@ To study data standardisation effects, load the output file called ‘sig_standa
 
 The files produced in the output directory called ‘sig_autocor_hmaps.pdf’ and ‘sig_autocor_dens.pdf’ provide heatmap and kernel density estimate plots of the correlation of each signature genes’ expression with the expression of every other signature gene, providing an analysis of signature compactness. 
 
-In addition to these plots produced for the analysis of autocorrelation, the files ‘sig_autocor_rankProd_*.pdf’ are produced when there is more than one dataset present for a given gene signature (not shown for this analysis). These plots represent the output of the BioConductor RankProduct package in the evaluation of signature genes whose median autocorrelation with all other genes consistently ranks low with the other signature genes. This facilitates the process for finding genes with consistent poor autocorrelation with the other genes of the gene signature, particularly when refining a given signature for optimal performance across a number of different datasets (e.g. multiple clinical cohorts, or clinical data and cell line data).
+In addition to these plots produced for the analysis of intra-signature correlation, the files ‘sig_autocor_rankProd_*.pdf’ are produced when there is more than one dataset present for a given gene signature (not shown for this analysis). These plots represent the output of the BioConductor RankProduct package in the evaluation of signature genes whose median intra-signature correlation with all other genes consistently ranks low with the other signature genes. This facilitates the process for finding genes with consistent poor intra-signature correlation with the other genes of the gene signature, particularly when refining a given signature for optimal performance across a number of different datasets (e.g. multiple clinical cohorts, or clinical data and cell line data).
 
-![Plot of autocorrelation heatmaps for gene signature and dataset combinations](sample_plots/sig_autocor_hmps.png){ width=80% }
+![Plot of intra-signature correlation heatmaps for gene signature and dataset combinations](sample_plots/sig_autocor_hmps.png){ width=80% }
 
 ## Step 9: Analysis of signature structure
 
@@ -198,7 +205,7 @@ The radarplot produced has 14 axes, each representative of one of the following 
 
 * __$\rho_{Mean, Med.}$__:	Absolute correlation coefficient of mean and median of signature genes.	Absolute value of Spearman correlation coefficient between mean and median of signature elements, used as scoring metrics across samples.
 
-* __Autocor.__: Median of autocorrelation values for all signature genes. Median of list of all correlation coefficients for each signature element with every other signature element.
+* __Intra-sig. Corr.__: Median of intra-signature correlation values for all signature genes. Median of list of all correlation coefficients for each signature element with every other signature element.
 
 * __Prop. Expressed__:	Median proportion of samples expressing signature genes above threshold. Median value of list of proportions of samples expressing each signature element above threshold for each signature element. Threshold is defined as median of expression of all genes, if not user-specified.
 
@@ -223,7 +230,7 @@ The radarplot produced has 14 axes, each representative of one of the following 
 
 ## Imagemagick dependency
 Issues may be experienced if the 'ImageMagick' dependency is not installed on the user's system (particularly for Windows systems). 
-To install this dependency, please follow directions at: <http://imagemagick.org/script/download.php>.
+To install this dependency, please follow directions at: <https://imagemagick.org/script/download.php>.
 
 ## RStudio plot size issue
 There is a known issue with RStudio plot size being too small causing errors with the plots being produced, even if they are not displayed in RStudio. The error in this case will appear in the log file as: ```Error in graphics::plot.new(): figure margins too large```.
@@ -264,7 +271,7 @@ The _sigQC_ package depends on having installed versions of the following packag
 
 # References
 
-1. Dhawan, A., Barberis, A., Cheng, W.C., Domingo, E., West, C., Maughan, T., Scott, J., Harris, A.L. and Buffa, F.M., 2017. sigQC: A procedural approach for standardising the evaluation of gene signatures. _bioRxiv_, p.203729.
+1.  Dhawan, Andrew, Alessandro Barberis, Wei-Chen Cheng, Enric Domingo, Catharine West, Tim Maughan, Jacob G. Scott, Adrian L. Harris, and Francesca M. Buffa. ``Guidelines for using sigQC for systematic evaluation of gene signatures.'' _Nature protocols_ 14, no. 5 (2019): 1377-1400.
 
 <!-- ## Styles -->
 
