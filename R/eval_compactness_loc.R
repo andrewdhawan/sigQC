@@ -80,7 +80,7 @@ eval_compactness_loc <- function(gene_sigs_list,names_sigs, mRNA_expr_matrix, na
                          na.color="grey",
                          labRow=rownames(autocors),
                          labCol=colnames(autocors),#gene_sig,
-                         main = paste0("\n\nAutocorrelation\n", names_datasets[[dataset_ind]] ,' ',names_sigs[[sig_ind]]),
+                         main = paste0("\n\nIntra-sig. Corr.\n", names_datasets[[dataset_ind]] ,' ',names_sigs[[sig_ind]]),
                          dendrogram = "col",
                          symbreaks = T,
                          Rowv = T,Colv=T ,key.xlab='Rho',key.ylab=NA,  key.title=NA,cexRow=max(min(0.5,(4*4/length(rownames(autocors)))),0.06),cexCol=max(min(0.5,(4*4/length(rownames(autocors)))),0.06),margins=c(1+(max(nchar(rownames(autocors)))/2),1+ (max(nchar(rownames(autocors)))/2)))
@@ -195,7 +195,7 @@ eval_compactness_loc <- function(gene_sigs_list,names_sigs, mRNA_expr_matrix, na
   # draw the labels for the plot
   graphics::mtext(side = 2, line = 2, 'Density',cex=0.8)
   graphics::mtext(side = 1, line = 2, 'Rho',cex=0.8)
-  graphics::mtext(side = 3, line = 2,'Autocorrelation Density')
+  graphics::mtext(side = 3, line = 2,'Intra-sig. Corr. Density')
   # makes the legend for the plot (sets parameters)
   op <- graphics::par(cex=0.6)#,xpd=T)
 
@@ -208,73 +208,79 @@ eval_compactness_loc <- function(gene_sigs_list,names_sigs, mRNA_expr_matrix, na
     g <- grDevices::dev.off() # to reset the graphics pars to defaults
   }  # the following only computes the rank product if there is more than one dataset for which to compute it for
   if (length(names_datasets) > 1){
-  for(k in 1:length(names_sigs)){
-    gene_sig <- gene_sigs_list[[names_sigs[k]]] #load the gene signature
-    if(is.matrix(gene_sig)){gene_sig = as.vector(gene_sig);}
-    #create the canvas
-    if (showResults){
-      grDevices::dev.new()
-    }else{
-      grDevices::pdf(file.path(out_dir,paste0('sig_autocor_rankProd_',names_sigs[k],'.pdf')),width=10,height=10)
-    }
+    RankProdInstalled = (nchar(system.file(package='RankProd')) > 0)
 
-    graphics::par(cex.main=0.8,cex.lab = 0.6,oma=c(2,2,2,2),mar=c(4,4,4,4)) #set drawing parameters
+    if(RankProdInstalled){
+      for(k in 1:length(names_sigs)){
+        gene_sig <- gene_sigs_list[[names_sigs[k]]] #load the gene signature
+        if(is.matrix(gene_sig)){gene_sig = as.vector(gene_sig);}
+        #create the canvas
+        if (showResults){
+          grDevices::dev.new()
+        }else{
+          grDevices::pdf(file.path(out_dir,paste0('sig_autocor_rankProd_',names_sigs[k],'.pdf')),width=10,height=10)
+        }
 
-    #now we take the median of the genes' autocorrelation for each gene in each dataset and then look at the rank product over the different cancer types
-    #note that the rank product analysis is only done if there is more than one dataset (otherwise not done, and is doen separately for each gene signature)
-      overall_rank_mat <- matrix(NA,nrow=length(unique(gene_sig)),ncol=length(names_datasets))
-      #create the overall matrix of datsets and signature genes containing the
-      #median gene autocorrelation for each dataset
-      row.names(overall_rank_mat) <- unique(gene_sig)
-      colnames(overall_rank_mat) <- names_datasets
-      for (i in 1:length(names_datasets)){
-        data.matrix = mRNA_expr_matrix[[names_datasets[i]]] #load data
-        inter = intersect(unique(gene_sig),rownames(data.matrix)) #consider only genes present in that dataset
-        autocors <- stats::cor(t(stats::na.omit(data.matrix[inter,])),method='spearman')
-        median_scores <- as.matrix(apply(autocors,2,function(x) {stats::median(stats::na.omit(x))})) #median autocorrelation
-        overall_rank_mat[rownames(median_scores),i] <- median_scores[,1]
-      }
-      # the following computes the rank product
-      # require(RankProd)
-      if(is.null(origin)){
-        origin <- rep(1,length(names_datasets))
-      }
-      RP.out <-RankProd::RPadvance(data = overall_rank_mat,cl = rep(1,times=length(names_datasets)),origin = origin ,logged = T,gene.names=rownames(overall_rank_mat)) #
-      RankProd::plotRP(RP.out ,cutoff=0.05)
-      #the following will calcualte the full output table for the rank prod and save it sorted two ways
-      table_rank_prod <- cbind(RP.out$pfp,RP.out$pval,RP.out$RPs)
-      colnames(table_rank_prod) <- c(paste0("pfp_",colnames(RP.out$pfp)),paste0('p_val',colnames(RP.out$pval)),paste0("Rank_Product_",colnames(RP.out$RPs)))
-      if(!dir.exists(file.path(out_dir,'rank_prod'))){
-        dir.create(file.path(out_dir,'rank_prod')) #create the dir
-      }
-      utils::write.csv(table_rank_prod[order(table_rank_prod[,1]),],file=file.path(out_dir, 'rank_prod',paste0('rank_product_table1_',names_sigs[k],'.txt')),quote=F)
-      utils::write.csv(table_rank_prod[order(table_rank_prod[,2]),],file=file.path(out_dir, 'rank_prod',paste0('rank_product_table2_',names_sigs[k],'.txt')),quote=F)
+        graphics::par(cex.main=0.8,cex.lab = 0.6,oma=c(2,2,2,2),mar=c(4,4,4,4)) #set drawing parameters
 
-      # #compute the tables of up and down regulated genes
-      # table_rank_prod <- RankProd::topGene(RP.out,cutoff=0.05,method="pfp",logged=T, gene.names=rownames(overall_rank_mat))#intersect(gene_sig[,1],rownames(mRNA_expr_matrix[[names_datasets[i]]])))
-      # # output the rank product table to file
-      # if( (!is.null(table_rank_prod$Table1))) {
-      #   dir.create(file.path(out_dir,'rank_prod')) #create the dir
-      #     utils::write.csv(table_rank_prod$Table1,file=file.path(out_dir, 'rank_prod',paste0('rank_product_table1_',names_sigs[k],'.txt')),quote=F,sep='\t')
+        #now we take the median of the genes' autocorrelation for each gene in each dataset and then look at the rank product over the different cancer types
+        #note that the rank product analysis is only done if there is more than one dataset (otherwise not done, and is doen separately for each gene signature)
+          overall_rank_mat <- matrix(NA,nrow=length(unique(gene_sig)),ncol=length(names_datasets))
+          #create the overall matrix of datsets and signature genes containing the
+          #median gene autocorrelation for each dataset
+          row.names(overall_rank_mat) <- unique(gene_sig)
+          colnames(overall_rank_mat) <- names_datasets
+          for (i in 1:length(names_datasets)){
+            data.matrix = mRNA_expr_matrix[[names_datasets[i]]] #load data
+            inter = intersect(unique(gene_sig),rownames(data.matrix)) #consider only genes present in that dataset
+            autocors <- stats::cor(t(stats::na.omit(data.matrix[inter,])),method='spearman')
+            median_scores <- as.matrix(apply(autocors,2,function(x) {stats::median(stats::na.omit(x))})) #median autocorrelation
+            overall_rank_mat[rownames(median_scores),i] <- median_scores[,1]
+          }
+          # the following computes the rank product
+          # require(RankProd)
+          if(is.null(origin)){
+            origin <- rep(1,length(names_datasets))
+          }
+          RP.out <-RankProd::RPadvance(data = overall_rank_mat,cl = rep(1,times=length(names_datasets)),origin = origin ,logged = T,gene.names=rownames(overall_rank_mat)) #
+          RankProd::plotRP(RP.out ,cutoff=0.05)
+          #the following will calcualte the full output table for the rank prod and save it sorted two ways
+          table_rank_prod <- cbind(RP.out$pfp,RP.out$pval,RP.out$RPs)
+          colnames(table_rank_prod) <- c(paste0("pfp_",colnames(RP.out$pfp)),paste0('p_val',colnames(RP.out$pval)),paste0("Rank_Product_",colnames(RP.out$RPs)))
+          if(!dir.exists(file.path(out_dir,'rank_prod'))){
+            dir.create(file.path(out_dir,'rank_prod')) #create the dir
+          }
+          utils::write.csv(table_rank_prod[order(table_rank_prod[,1]),],file=file.path(out_dir, 'rank_prod',paste0('rank_product_table1_',names_sigs[k],'.txt')),quote=F)
+          utils::write.csv(table_rank_prod[order(table_rank_prod[,2]),],file=file.path(out_dir, 'rank_prod',paste0('rank_product_table2_',names_sigs[k],'.txt')),quote=F)
 
-      # }
-      # if (!is.null(table_rank_prod$Table2)){
-      #     dir.create(file.path(out_dir,'rank_prod')) #create the dir
-      #     utils::write.csv(table_rank_prod$Table2,file=file.path(out_dir, 'rank_prod',paste0('rank_product_table2_',names_sigs[k],'.txt')),quote=F,sep='\t')
-      # }
+          # #compute the tables of up and down regulated genes
+          # table_rank_prod <- RankProd::topGene(RP.out,cutoff=0.05,method="pfp",logged=T, gene.names=rownames(overall_rank_mat))#intersect(gene_sig[,1],rownames(mRNA_expr_matrix[[names_datasets[i]]])))
+          # # output the rank product table to file
+          # if( (!is.null(table_rank_prod$Table1))) {
+          #   dir.create(file.path(out_dir,'rank_prod')) #create the dir
+          #     utils::write.csv(table_rank_prod$Table1,file=file.path(out_dir, 'rank_prod',paste0('rank_product_table1_',names_sigs[k],'.txt')),quote=F,sep='\t')
 
-      cat("Autocorrelation rank product successfully computed.\n", file=file) #output to log file
+          # }
+          # if (!is.null(table_rank_prod$Table2)){
+          #     dir.create(file.path(out_dir,'rank_prod')) #create the dir
+          #     utils::write.csv(table_rank_prod$Table2,file=file.path(out_dir, 'rank_prod',paste0('rank_product_table2_',names_sigs[k],'.txt')),quote=F,sep='\t')
+          # }
 
-    #save the rank product plot
-    if(showResults){
-      grDevices::dev.copy(grDevices::pdf,file.path(out_dir,paste0('sig_autocor_rankProd_',names_sigs[k],'.pdf')),width=10,height=10)
-    }
-    if(grDevices::dev.cur()!=1){
-        g <- grDevices::dev.off() # to reset the graphics pars to defaults
-    }
-   }
-  cat("Autocorrelation metrics successfully computed.\n", file=file) #output to log file
+          cat("Intra-sig. corr. rank product successfully computed.\n", file=file) #output to log file
 
+        #save the rank product plot
+        if(showResults){
+          grDevices::dev.copy(grDevices::pdf,file.path(out_dir,paste0('sig_autocor_rankProd_',names_sigs[k],'.pdf')),width=10,height=10)
+        }
+        if(grDevices::dev.cur()!=1){
+            g <- grDevices::dev.off() # to reset the graphics pars to defaults
+        }
+       }
+      cat("Intra-sig. corr. metrics successfully computed.\n", file=file) #output to log file
+   }else{
+    cat("Intra-sig. corr. metrics not computed. Please install RankProd from BioConductor.\n", file=file) #output to log file
+
+  }
   }else{
       cat("Rank product not computed as there is only one dataset.\n", file=file)
 

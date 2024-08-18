@@ -237,9 +237,15 @@ compare_metrics_loc <- function(gene_sigs_list,names_sigs, mRNA_expr_matrix, nam
       if(!is.matrix(data.matrix)){
         data.matrix.gsva <- as.matrix.data.frame(data.matrix,rownames.force=T)
       }
-      es.ssGSEA <- suppressWarnings(GSVA::gsva(data.matrix.gsva, list(inter), method="ssgsea", verbose=F, parallel.sz=1))
-      es.gsva <- suppressWarnings(GSVA::gsva(data.matrix.gsva, list(inter),  verbose=F, parallel.sz=1))
-      es.plage <- suppressWarnings(GSVA::gsva(data.matrix.gsva, list(inter), method="plage", verbose=F, parallel.sz=1))
+
+      gsvaPar <- GSVA::ssgseaParam(data.matrix.gsva, list(inter))
+      es.ssGSEA <- suppressWarnings(GSVA::gsva(gsvaPar, verbose=F))
+      
+      gsvaPar <- GSVA::gsvaParam(data.matrix.gsva, list(inter))
+      es.gsva <- suppressWarnings(GSVA::gsva(gsvaPar, verbose=F))
+
+      gsvaPar <- GSVA::plageParam(data.matrix.gsva, list(inter))
+      es.plage <- suppressWarnings(GSVA::gsva(gsvaPar, verbose=F))
     
       es.gsva <- es.gsva[1,]
       es.ssGSEA <- es.ssGSEA[1,]

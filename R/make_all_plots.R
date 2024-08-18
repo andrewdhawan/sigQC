@@ -20,7 +20,7 @@
 
 #' library(sigQC)
 #' names = c("dataset1")
-#' data.matrix = replicate(10, rnorm(20))#random matrix - 10 genes x 20 samples
+#' data.matrix = replicate(10, rnorm(50))#random matrix - 50 genes x 10 samples
 #' mRNA_expr_matrix = list()
 #' mRNA_expr_matrix[["dataset1"]] = data.matrix
 #' row.names(mRNA_expr_matrix$dataset1) <- as.character(1:(dim(mRNA_expr_matrix$dataset1)[1]))
@@ -31,8 +31,8 @@
 #' gene_sig = c('1', '4', '5')#gene ids
 #' gene_sigs_list[[signature]] = as.matrix(gene_sig)
 #' names_sigs = c(signature)
-#' make_all_plots(gene_sigs_list = gene_sigs_list, mRNA_expr_matrix = mRNA_expr_matrix, 
-#'     doNegativeControl=FALSE, out_dir = tempdir(), showResults=FALSE)
+#' \donttest{make_all_plots(gene_sigs_list = gene_sigs_list, mRNA_expr_matrix = mRNA_expr_matrix, 
+#'     doNegativeControl=FALSE, out_dir = tempdir(), showResults=FALSE)}
 
 
 
@@ -41,7 +41,7 @@ make_all_plots <- function(gene_sigs_list, mRNA_expr_matrix,names_sigs=NULL,name
   #### encoding scheme: major.minor
   #### major for large change
   #### minor for small change, whose results are expected to be similar as previous version. (two digits)
-  print("-----sigQC Version 0.1.20-----")
+  print("-----sigQC Version 0.1.24-----")
 
 
   ###########Check the input

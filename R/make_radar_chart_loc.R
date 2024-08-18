@@ -125,7 +125,7 @@ make_radar_chart_loc <- function(radar_plot_values,showResults = FALSE,names_sig
                    cglty = 1,cglwd = 1,calcex = 0.5,
                    vlabels = c('Relative Med. SD','Skewness',expression(sigma["">="10%"]),expression(sigma["">="25%"]),expression(sigma["">="50%"]),'Coef. of Var.',
                                'Non-NA Prop.','Prop. Expressed',
-                               'Autocor.',expression(rho["Mean,Med"]),
+                               'Intra-sig. Corr.',expression(rho["Mean,Med"]),
                                expression(rho["PCA1,Med"]),expression(rho["Mean,PCA1"]), expression(sigma["PCA1"]),
                                expression(rho["Med,Z-Med"])),
                    vlcex = 0.6,
